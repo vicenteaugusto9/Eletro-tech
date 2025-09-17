@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  id           Int        @id @default(autoincrement())
+  nome         String
+  email        String     @unique
+  senha        String
+  cpf          String     @unique
+  telefone     String
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
+  enderecos    Endereco[]
+  pedidos      Pedido[]
+  avaliacoes   Avaliacao[]
+  carrinho     Carrinho?
+}
+
+model Endereco {
+  id         Int      @id @default(autoincrement())
+  cliente    Cliente  @relation(fields: [clienteId], references: [id])
+  clienteId  Int
+  rua        String
+  numero     String
+  complemento String?
+  bairro     String
+  cidade     String
+  estado     String
+  cep        String
+  pedidos Pedido[]
+}
+
+model Vendedor {
+  id           Int        @id @default(autoincrement())
+  nome         String
+  email        String     @unique
+  senha        String
+  cnpj         String     @unique
+  telefone     String
+  endereco     String
+  cidade       String
+  estado       String
+  cep          String
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
+  produtos     Produto[]
+}
+
+model Categoria {
+  id        Int       @id @default(autoincrement())
+  nome      String    @unique
+  produtos  Produto[]
+}
+
+model Produto {
+  id           Int          @id @default(autoincrement())
+  nome         String
+  descricao    String
+  preco        Float
+  estoque      Int
+  imagemUrl    String
+  criadoEm     DateTime     @default(now())
+  atualizadoEm DateTime     @updatedAt
+  vendedor     Vendedor     @relation(fields: [vendedorId], references: [id])
+  vendedorId   Int
+  categoria    Categoria    @relation(fields: [categoriaId], references: [id])
+  categoriaId  Int
+  pedidos      PedidoProduto[]
+  avaliacoes   Avaliacao[]
+  carrinhoItens CarrinhoItem[]
+}
+
+model Pedido {
+  id           Int            @id @default(autoincrement())
+  cliente      Cliente        @relation(fields: [clienteId], references: [id])
+  clienteId    Int
+  endereco     Endereco      @relation(fields: [enderecoId], references: [id])
+  enderecoId   Int
+  criadoEm     DateTime       @default(now())
+  atualizadoEm DateTime       @updatedAt
+  status       StatusPedido
+  total        Float
+  produtos     PedidoProduto[]
+}
+
+model PedidoProduto {
+  id         Int     @id @default(autoincrement())
+  pedido     Pedido  @relation(fields: [pedidoId], references: [id])
+  pedidoId   Int
+  produto    Produto @relation(fields: [produtoId], references: [id])
+  produtoId  Int
+  quantidade Int
+  preco      Float
+}
+
+model Avaliacao {
+  id         Int      @id @default(autoincrement())
+  cliente    Cliente  @relation(fields: [clienteId], references: [id])
+  clienteId  Int
+  produto    Produto  @relation(fields: [produtoId], references: [id])
+  produtoId  Int
+  nota       Int      // 1 a 5
+  comentario String?
+  criadoEm   DateTime @default(now())
+}
+
+model Carrinho {
+  id         Int         @id @default(autoincrement())
+  cliente    Cliente     @relation(fields: [clienteId], references: [id])
+  clienteId  Int         @unique
+  itens      CarrinhoItem[]
+}
+
+model CarrinhoItem {
+  id         Int      @id @default(autoincrement())
+  carrinho   Carrinho @relation(fields: [carrinhoId], references: [id])
+  carrinhoId Int
+  produto    Produto  @relation(fields: [produtoId], references: [id])
+  produtoId  Int
+  quantidade Int
+}
+
+enum StatusPedido {
+  AGUARDANDO_PAGAMENTO
+  PAGO
+  ENVIADO
+  ENTREGUE
+  CANCELADO
+}
