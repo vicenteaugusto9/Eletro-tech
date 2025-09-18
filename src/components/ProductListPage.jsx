@@ -61,6 +61,13 @@ const ProductListPage = () => {
                   </Badge>
                 </Button>
               </Link>
+              
+              <Link to="/admin">
+                <Button variant="outline" size="sm">
+                  Admin
+                </Button>
+              </Link>
+              
               <Button variant="ghost" size="icon">
                 <User className="w-5 h-5" />
               </Button>

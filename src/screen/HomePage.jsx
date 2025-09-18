@@ -36,6 +36,7 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* 👇 CORREÇÃO APLICADA AQUI 👇 */}
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="icon">
                 <Heart className="w-5 h-5" />
@@ -49,23 +50,36 @@ export default function HomePage() {
                   </Badge>
                 </Button>
               </Link>
-              <Button variant="ghost" size="icon">
-                <User className="w-5 h-5" />
-              </Button>
+              
+              {/* Link para o login de ADMIN */}
+              <Link to="/admin/login">
+                <Button variant="outline" size="sm">
+                  Admin
+                </Button>
+              </Link>
+              
+              {/* Link para o login de CLIENTE (ícone de usuário) */}
+              <Link to="/login">
+                <Button variant="ghost" size="icon">
+                  <User className="w-5 h-5" />
+                </Button>
+              </Link>
             </div>
+            {/* FIM DA CORREÇÃO */}
+
           </div>
         </div>
       </header>
 
 
+      {/* O resto do seu código continua igual... */}
       <section className="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-4">Os Melhores Eletrônicos</h1>
             <p className="text-xl md:text-2xl mb-8 text-blue-100">Tecnologia de ponta com os melhores preços</p>
-            <Link to={"/products/:pageNumber" } >
+            <Link to={"/products/1" } > {/* CORREÇÃO EXTRA: Apontei para a página 1 */}
             <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
-              
               Ver Ofertas
             </Button>
             </Link>
@@ -92,7 +106,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Produtos em Destaque</h2>
-             <Link to={"/products/:pageNumber" } >
+             <Link to={"/products/1" } > {/* CORREÇÃO EXTRA: Apontei para a página 1 */}
             <Button variant="outline">Ver Todos</Button>
              </Link>
           </div>
@@ -107,7 +121,7 @@ export default function HomePage() {
                 <CardHeader className="p-0">
                   <div className="relative overflow-hidden rounded-t-lg">
                     <img
-                      src={product.images || "/placeholder.svg"}
+                      src={product.images[0] || "/placeholder.svg"} // CORREÇÃO EXTRA: Garanti que pega a primeira imagem
                       alt={product.name}
                       width={300}
                       height={300}
@@ -156,18 +170,17 @@ export default function HomePage() {
                   </div>
                 </CardContent>
 
-                <CardFooter className="p-4 pt-0 space-y-2 mt-auto">
-                  
-                  <Link to={`/product/${product.id}`} className="w-full">
-                    <Button variant="outline" className="w-full bg-transparent">
-                      Ver Detalhes
-                    </Button>
-                  </Link> 
-                  <Button className="w-10 h-10  ">
-           
-                    <ShoppingCart className="w-4 h-4  " />
-                    
-                  </Button>
+                <CardFooter className="p-4 pt-0 mt-auto">
+                    <div className="flex w-full gap-2">
+                        <Link to={`/product/${product.id}`} className="flex-1">
+                            <Button variant="outline" className="w-full bg-transparent">
+                            Ver Detalhes
+                            </Button>
+                        </Link> 
+                        <Button className="w-10 h-10">
+                            <ShoppingCart className="w-4 h-4" />
+                        </Button>
+                    </div>
                 </CardFooter>
               </Card>
             ))}
